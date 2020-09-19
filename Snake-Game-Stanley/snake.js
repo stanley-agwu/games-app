@@ -1,8 +1,10 @@
+
 const canvas = document.getElementById("gameBoard")
 const context = canvas.getContext("2d")
 
-// create the unit
-const unit = 20;
+// Initializing the grid(cell) unit and canvas size
+const unit = 25;
+const canvasSize= 24;
 
 // create the snake body
 let snakeBody = [];
@@ -11,104 +13,119 @@ snakeBody[0] = {
     y : 10 * unit
 };
 
-// create the food location
+// Creating the random food location
 let food = {
-    x : Math.floor(Math.random()*23 +1) * unit,
-    y : Math.floor(Math.random()*23 +1) * unit
+    x : Math.floor((Math.random() * canvasSize-1) + 1) * unit,
+    y : Math.floor((Math.random() * (canvasSize - 2)) + 3) * unit
 }
 
-// create the score var
+// Creating the score variable
 let score = 0;
 
-//The snake control
+//Setting the snake direction and control
 let dir;
-document.addEventListener("keydown", direction);
 
-function direction(event){
-  if(event.keyCode == 37 && dir != "RIGHT"){
+const direction=(event)=>{
+  if(event.keyCode == 37 && dir !== "RIGHT"){
       dir = "LEFT";
-  }else if(event.keyCode == 38 && dir != "DOWN"){
+  }else if(event.keyCode == 38 && dir !== "DOWN"){
       dir = "UP";
-  }else if(event.keyCode == 39 && dir != "LEFT"){
+  }else if(event.keyCode == 39 && dir !== "LEFT"){
       dir = "RIGHT";
-  }else if(event.keyCode == 40 && dir != "UP"){
+  }else if(event.keyCode == 40 && dir !== "UP"){
       dir = "DOWN";
   }
 }
+document.addEventListener("keydown", direction);
 
-// check collision function
-function collision(head, array){
-  for(let i = 0; i < array.length; i++){
-      if(head.x == array[i].x && head.y == array[i].y){
+// Creating Collision Function
+const collision = (snakeHead, someArray)=>{
+  for(let i = 0; i < someArray.length; i++){
+      if((snakeHead.x == someArray[i].x) && (snakeHead.y == someArray[i].y)){
         return true;
-      }
+      } 
   }
-  return false;
+  return false
 }
 
-function draw(){
+
+const draw=()=>{
+  //Drawing the html canvas
+  context.fillStyle = '#F0EDEE';
+  context.fillRect(0, 2 * unit, (canvasSize * unit), ((canvasSize-2) * unit));
+
   for(let i = 0; i < snakeBody.length ; i++){
-    context.fillStyle = ( i == 0 ) ? "green" : "#274690";
+    context.fillStyle = ( i == 0 ) ? "#14591D" : "#58BC82";
+
     context.fillRect(snakeBody[i].x, snakeBody[i].y, unit, unit);
 
     context.strokeStyle = "#171D1C";
     context.strokeRect(snakeBody[i].x, snakeBody[i].y, unit, unit);
-
-    context.fillStyle = "#FF206E";
-    context.fillRect(food.x, food.y, unit, unit);
-
-    context.strokeStyle = "#171D1C";
-    context.strokeRect(food.x, food.y, unit, unit);
   }
 
-  // old head position
+  //Creating the food
+  context.fillStyle = "#FF206E";
+  context.fillRect(food.x, food.y, unit, unit);
+
+  context.strokeStyle = "#171D1C";
+  context.strokeRect(food.x, food.y, unit, unit);
+
+  // This is the old head position
   let snakeBodyX = snakeBody[0].x;
   let snakeBodyY = snakeBody[0].y;
 
-  // snake direction
-  if(dir == "LEFT") {snakeBodyX -= unit;}
-  if(dir == "UP") {snakeBodyY -= unit;}
-  if(dir == "RIGHT") {snakeBodyX += unit;}
-  if(dir == "DOWN") {snakeBodyY += unit;}
+  // Setting snake movement with snake direction
+  if(dir == "LEFT") {snakeBodyX -= unit}
+  if(dir == "UP") {snakeBodyY -= unit}
+  if(dir == "RIGHT") {snakeBodyX += unit}
+  if(dir == "DOWN") {snakeBodyY += unit}
 
-  // if the snake eats the food
-  if(snakeBodyX == food.x && snakeBodyY == food.y){
-    score++;
-    food = {
-        x : Math.floor(Math.random()*23 +1) * unit,
-        y : Math.floor(Math.random()*23 +1) * unit
-      }
-      // we don't remove the tail
-  }else{
-    // remove the tail
-    snakeBody.pop();
+  // Checking if the snake eats the food
+  if (snakeBodyX == food.x && snakeBodyY == food.y)
+    {
+      score+=10;
+      food = {
+          x : Math.floor((Math.random()* canvasSize-1) + 1) * unit,
+          y : Math.floor((Math.random()*(canvasSize - 2)) + 3) * unit
+              }
+      // The tail is left unremoved
   }
+  else {
+    snakeBody.pop();
+    //The tail is unremoved
+  }
+  
 
-  // add new Head
+  // Creating a new head
   let newHead = {
       x : snakeBodyX,
       y : snakeBodyY
   }
   
-  // check game over
-  if(snakeBodyX < unit || snakeBodyX > 23*unit || snakeBodyY < unit || 
-    snakeBodyY > 23*unit || collision(newHead, snakeBody)){
-      clearInterval(game);
+  // Checking if Game is Over
+  if(snakeBodyX < 0 || snakeBodyX > (canvasSize-1) * unit || snakeBodyY < (2 * unit) || 
+    snakeBodyY > (canvasSize-1) * unit || collision(newHead, snakeBody)){
+    clearInterval(game);
   }
 
   snakeBody.unshift(newHead);
 
-  /*context.fillStyle = "white";
+  //Adding the Score
+  context.fillStyle = "#F0EDEE";
   context.font = "25px Verdana";
-  context.fillText("Score : "+ score, 2*box, 1.6*box);*/
+  context.clearRect(0, 0, (Math.floor(canvasSize/2) * unit), (2 * unit));
+  context.fillText("Score : "+ score, 0, unit);
 
+  //Add Name to Game Board
+  context.fillStyle = "#D496A7";
+  context.font = "23px Verdana";
+  context.fillText("5 Stack Snake Game", 14 * unit, unit);
 
 }
 
- // call draw function every 500 ms
+
 let game=setInterval(draw, 500);
 
-draw();
 
 
 
