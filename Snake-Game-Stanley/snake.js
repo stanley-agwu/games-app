@@ -15,12 +15,15 @@ snakeBody[0] = {
 
 // Creating the random food location
 let food = {
-    x : Math.floor((Math.random() * canvasSize-1) + 1) * unit,
-    y : Math.floor((Math.random() * (canvasSize - 2)) + 3) * unit
+    x : Math.floor((Math.random() * (canvasSize-1)) + 1) * unit,
+    y : Math.floor((Math.random() * (canvasSize - 3)) + 3) * unit
 }
 
 // Creating the score variable
 let score = 0;
+
+// Initialize speed in ms
+let speed = 400;
 
 //Setting the snake direction and control
 let dir;
@@ -85,8 +88,8 @@ const draw=()=>{
     {
       score+=10;
       food = {
-          x : Math.floor((Math.random()* canvasSize-1) + 1) * unit,
-          y : Math.floor((Math.random()*(canvasSize - 2)) + 3) * unit
+          x : Math.floor(Math.random()* (canvasSize-2) + 1) * unit,
+          y : Math.floor((Math.random()*(canvasSize - 3)) + 3) * unit
               }
       // The tail is left unremoved
   }
@@ -101,30 +104,43 @@ const draw=()=>{
       x : snakeBodyX,
       y : snakeBodyY
   }
+
+  //Controlling speed of the game
+  if (score < 100){ speed = 400 } 
+    else if (score >= 100 && score < 200){ speed = 300 } 
+      else if (score >= 200 && score < 300){ speed = 200 } 
+      else {
+    speed=100
+    }
+
   
   // Checking if Game is Over
   if(snakeBodyX < 0 || snakeBodyX > (canvasSize-1) * unit || snakeBodyY < (2 * unit) || 
     snakeBodyY > (canvasSize-1) * unit || collision(newHead, snakeBody)){
     clearInterval(game);
+    context.fillStyle = "#595959";
+    context.font = "5em Verdana";
+    context.fontStyle = "Italic";
+    context.fillText("Game Over", 3 * unit, 13 * unit);
   }
 
   snakeBody.unshift(newHead);
 
   //Adding the Score
   context.fillStyle = "#F0EDEE";
-  context.font = "25px Verdana";
+  context.font = "1.5em Verdana";
   context.clearRect(0, 0, (Math.floor(canvasSize/2) * unit), (2 * unit));
   context.fillText("Score : "+ score, 0, unit);
 
   //Add Name to Game Board
   context.fillStyle = "#D496A7";
-  context.font = "23px Verdana";
+  context.font = "1.4em Verdana";
   context.fillText("5 Stack Snake Game", 14 * unit, unit);
 
 }
 
 
-let game=setInterval(draw, 500);
+let game=setInterval(draw, speed);
 
 
 
