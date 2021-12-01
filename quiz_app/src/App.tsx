@@ -19,8 +19,6 @@ const App = () => {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(true);
 
-  console.log(questions);
-
   const startAPIcall = async () => {
     setLoading(true);
     setGameOver(false);
@@ -41,7 +39,7 @@ const App = () => {
     if (!gameOver) {
       const answer = e.currentTarget.value;
       const isCorrect = questions[number].correct_answer === answer;
-      isCorrect && setScore((prevScore) => prevScore + 10)
+      isCorrect && setScore((prevScore) => prevScore + 10);
       const answerObject = {
         question: questions[number].question,
         answer,
