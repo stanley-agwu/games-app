@@ -27,12 +27,12 @@ export const Wrapper = styled.div`
     flex-direction: column;
     align-items: center;
 
-    > p {
-        color: fff;
+    .loading {
+        color: #fff;
     }
 
     .score {
-        color: fff;
+        color: #fff;
         font-size: 2rem;
         margin: 0;
     }
@@ -47,10 +47,10 @@ export const Wrapper = styled.div`
         -moz-background-clip: text;
         -moz-text-fill-color: transparent;
         filter: drop-shadow(2px 2px #0085a3);
-        font-size: 70px;
+        font-size: 4.375rem;
         font-weight: 700;
         text-align: center;
-        margin: 20px;
+        margin: 1.25rem;
     }
 
     .start, .next {

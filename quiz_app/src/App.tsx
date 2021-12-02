@@ -1,19 +1,13 @@
 import React, { useState } from 'react';
 import QuestionCard from './components/QuestionCard';
-import { fetchQuizQuestions, Difficulty, QuestionState } from './API';
 import { GlobalStyle, Wrapper } from './App.styles';
+import { fetchQuizQuestions, Difficulty } from './API';
+import { AnswerObject, QuestionState } from './types';
 
-export type AnswerObject = {
-  question: string;
-  answer: string;
-  isCorrect: boolean;
-  correctAnswer: string
-}
+const App: React.FC = () => {
+  const TOTAL_QUESTIONS: number = 10;
 
-const TOTAL_QUESTIONS = 10;
-
-const App = () => {
-  const [loading, setLoading ] = useState(false);
+  const [loading, setLoading ] = useState<boolean>(false);
   const [questions, setQuestions] = useState<QuestionState[]>([]);
   const [number, setNumber] = useState(0);
   const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
@@ -21,40 +15,39 @@ const App = () => {
   const [gameOver, setGameOver] = useState(true);
 
   const startAPIcall = async () => {
-    setLoading(true);
-    setGameOver(false);
+      setLoading(true);
+      setGameOver(false);
 
-    const newQuestions = await fetchQuizQuestions(
-      TOTAL_QUESTIONS,
-      Difficulty.EASY
-    )
+      const newQuestions = await fetchQuizQuestions(
+          TOTAL_QUESTIONS,
+          Difficulty.EASY
+      )
 
-    setQuestions(newQuestions);
-    setScore(0);
-    setUserAnswers([]);
-    setNumber(0);
-    setLoading(false);
+      setQuestions(newQuestions);
+      setScore(0);
+      setUserAnswers([]);
+      setNumber(0);
+      setLoading(false);
   }
 
   const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!gameOver) {
-      const answer = e.currentTarget.value;
-      const isCorrect = questions[number].correct_answer === answer;
-      isCorrect && setScore((prevScore) => prevScore + 10);
-      const answerObject = {
-        question: questions[number].question,
-        answer,
-        isCorrect,
-        correctAnswer: questions[number].correct_answer
-      };
-      setUserAnswers((prevAnswers) => [...prevAnswers, answerObject]);
-    }
-    
+      if (!gameOver) {
+          const answer = e.currentTarget.value;
+          const isCorrect = questions[number].correct_answer === answer;
+          isCorrect && setScore((prevScore) => prevScore + 10);
+          const answerObject = {
+          question: questions[number].question,
+          answer,
+          isCorrect,
+          correctAnswer: questions[number].correct_answer
+          };
+          setUserAnswers((prevAnswers) => [...prevAnswers, answerObject]);
+      }
   }
 
   const nextQuestion = () => {
-    const nextQuestion = number + 1;
-    nextQuestion === TOTAL_QUESTIONS ? setGameOver(true) : setNumber(nextQuestion);
+      const nextQuestion = number + 1;
+      nextQuestion === TOTAL_QUESTIONS ? setGameOver(true) : setNumber(nextQuestion);
   }
 
   return (
